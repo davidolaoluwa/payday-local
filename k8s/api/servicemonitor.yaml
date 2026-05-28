@@ -1,0 +1,14 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: api
+  namespace: payday
+  labels:
+    release: kube-prometheus-stack
+spec:
+  selector:
+    matchLabels: { app: api }
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 15s

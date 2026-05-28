@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: payday
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app: frontend }
+  template:
+    metadata:
+      labels: { app: frontend }
+    spec:
+      containers:
+      - name: frontend
+        image: localhost:5000/payday/frontend:v1.0.0
+        ports:
+        - containerPort: 80
+        resources:
+          requests: { memory: '32Mi', cpu: '25m' }
+          limits:   { memory: '64Mi', cpu: '100m' }
+        readinessProbe:
+          httpGet: { path: /, port: 80 }
+          initialDelaySeconds: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-svc
+  namespace: payday
+spec:
+  selector: { app: frontend }
+  ports:
+  - port: 80
+    targetPort: 80
