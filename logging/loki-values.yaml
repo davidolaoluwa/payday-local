@@ -1,0 +1,19 @@
+# Values for the grafana/loki-stack chart (NOT the grafana/loki chart).
+loki:
+  enabled: true
+  isDefault: false
+  persistence:
+    enabled: true
+    storageClassName: standard
+    size: 10Gi
+  config:
+    limits_config:
+      retention_period: 336h        # keep 14 days of logs
+      reject_old_samples: true
+      reject_old_samples_max_age: 168h
+promtail:
+  enabled: true                     # chart auto-points it at the loki service
+grafana:
+  enabled: false                    # we already have Grafana from Phase 8
+prometheus:
+  enabled: false                    # we already have Prometheus from Phase 8

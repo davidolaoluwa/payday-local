@@ -1,0 +1,25 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: payday-slo-rules
+  namespace: monitoring
+  labels:
+    release: kube-prometheus-stack
+spec:
+  groups:
+  - name: payday.availability
+    rules:
+    - alert: PaydayApiFewPods
+      expr: count(kube_pod_status_ready{namespace="payday",condition="true"}) < 2
+      for: 2m
+      labels: { severity: critical }
+      annotations:
+        summary: 'Payday has fewer than 2 ready pods'
+    - alert: PaydayHighErrorRate
+      expr: |
+        sum(rate(payday_http_requests_total{status=~"5.."}[5m]))
+        / sum(rate(payday_http_requests_total[5m])) > 0.01
+      for: 5m
+      labels: { severity: warning }
+      annotations:
+        summary: 'Payday API error rate above 1%'
